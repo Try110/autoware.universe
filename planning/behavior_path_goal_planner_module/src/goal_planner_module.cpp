@@ -136,11 +136,26 @@ void GoalPlannerModule::updateOccupancyGrid()
   occupancy_grid_map_->setMap(*(planner_data_->occupancy_grid));
 }
 
+bool GoalPlannerModule::hasPreviousModulePathShapeChanged() const
+{
+
+  if(!last_previous_module_output_.path){
+    return true;
+  }
+
+  const auto current_path = *getPreviousModuleOutput().path;
+
+  // the terminal distance is far
+  return (
+    calcDistance2d(
+      last_previous_module_output_.path->points.back().point, current_path.points.back().point) >
+    0.1);
+}
+
 // generate pull over candidate paths
 void GoalPlannerModule::onTimer()
 {
-  // already generated pull over candidate paths
-  if (!thread_safe_data_.get_pull_over_path_candidates().empty()) {
+  if (getCurrentStatus() == ModuleStatus::IDLE) {
     return;
   }
 
@@ -155,9 +170,14 @@ void GoalPlannerModule::onTimer()
     return;
   }
 
-  if (getCurrentStatus() == ModuleStatus::IDLE) {
+  // already generated pull over candidate paths
+  if (
+    !thread_safe_data_.get_pull_over_path_candidates().empty() &&
+    !hasPreviousModulePathShapeChanged()) {
     return;
   }
+
+  const auto previous_module_output = getPreviousModuleOutput();
 
   const auto goal_candidates = thread_safe_data_.get_goal_candidates();
 
@@ -173,6 +193,7 @@ void GoalPlannerModule::onTimer()
                                     const std::shared_ptr<PullOverPlannerBase> & planner,
                                     const GoalCandidate & goal_candidate) {
     planner->setPlannerData(planner_data_);
+    planner->setPreviousModuleOutput(previous_module_output);
     auto pull_over_path = planner->plan(goal_candidate.goal_pose);
     if (pull_over_path && isCrossingPossible(*pull_over_path)) {
       pull_over_path->goal_id = goal_candidate.id;
@@ -213,7 +234,11 @@ void GoalPlannerModule::onTimer()
     const std::lock_guard<std::recursive_mutex> lock(mutex_);
     thread_safe_data_.set_pull_over_path_candidates(path_candidates);
     thread_safe_data_.set_closest_start_pose(closest_start_pose);
+    RCLCPP_INFO(
+      getLogger(), "generated %lu pull over path candidates", path_candidates.size());
   }
+
+  last_previous_module_output_ = previous_module_output;
 }
 
 void GoalPlannerModule::onFreespaceParkingTimer()

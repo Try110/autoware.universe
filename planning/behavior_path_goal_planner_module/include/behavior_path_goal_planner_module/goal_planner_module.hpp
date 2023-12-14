@@ -472,6 +472,9 @@ private:
   // new turn signal
   TurnSignalInfo calcTurnSignalInfo() const;
 
+  BehaviorModuleOutput last_previous_module_output_{};
+  bool hasPreviousModulePathShapeChanged() const;
+
   // timer for generating pull over path candidates in a separate thread
   void onTimer();
   void onFreespaceParkingTimer();

@@ -110,12 +110,42 @@ std::optional<PullOverPath> ShiftPullOver::generatePullOverPath(
     tier4_autoware_utils::calcOffsetPose(goal_pose, -after_shift_straight_distance, 0, 0);
 
   // generate road lane reference path to shift end
-  const auto road_lane_reference_path_to_shift_end = utils::resamplePathWithSpline(
-    generateReferencePath(road_lanes, shift_end_pose), parameters_.center_line_path_interval);
+  // const auto previous_path = utils::resamplePathWithSpline(
+  //   generateReferencePath(road_lanes, shift_end_pose), parameters_.center_line_path_interval);
+
+  const auto prev_module_path = *previous_module_output_.path;
+  const auto prev_module_reference_path = *previous_module_output_.reference_path;
+  // calc prev_module_path end pose lateral shift from refrence path
+  const auto prev_module_path_terminal_pose = prev_module_path.points.back().point.pose;
+  const double lateral_shift_from_reference_path = motion_utils::calcLateralOffset(
+    prev_module_reference_path.points, prev_module_path_terminal_pose.position);
+
+  const size_t prev_module_path_terminal_idx =
+    motion_utils::findFirstNearestSegmentIndexWithSoftConstraints(
+      prev_module_reference_path.points, prev_module_path_terminal_pose,
+      planner_data_->parameters.ego_nearest_dist_threshold,
+      planner_data_->parameters.ego_nearest_yaw_threshold);
+
+  const double distance_to_terminal_to_shift_end = motion_utils::calcSignedArcLength(
+    prev_module_reference_path.points, prev_module_path_terminal_idx, shift_end_pose.position);
+
+  auto clipped_path_from_terminal_to_shift_end = prev_module_reference_path;
+  utils::clipPathLength(
+    clipped_path_from_terminal_to_shift_end, prev_module_path_terminal_idx, 1.0,
+    distance_to_terminal_to_shift_end);
+
+  for (auto & p : clipped_path_from_terminal_to_shift_end.points) {
+    p.point.pose =
+      tier4_autoware_utils::calcOffsetPose(p.point.pose, 0, -lateral_shift_from_reference_path, 0);
+  }
+
+  auto extended_prev_module_path = prev_module_path;
+  for (auto & p : clipped_path_from_terminal_to_shift_end.points) {
+    extended_prev_module_path.points.push_back(p);
+  }
 
   // calculate shift length
-  const Pose & shift_end_pose_road_lane =
-    road_lane_reference_path_to_shift_end.points.back().point.pose;
+  const Pose & shift_end_pose_road_lane = extended_prev_module_path.points.back().point.pose;
   const double shift_end_road_to_target_distance =
     tier4_autoware_utils::inverseTransformPoint(shift_end_pose.position, shift_end_pose_road_lane)
       .y;
@@ -124,15 +154,15 @@ std::optional<PullOverPath> ShiftPullOver::generatePullOverPath(
   const double pull_over_distance = PathShifter::calcLongitudinalDistFromJerk(
     shift_end_road_to_target_distance, lateral_jerk, pull_over_velocity);
   const double before_shifted_pull_over_distance = calcBeforeShiftedArcLength(
-    road_lane_reference_path_to_shift_end, pull_over_distance, shift_end_road_to_target_distance);
+    extended_prev_module_path, pull_over_distance, shift_end_road_to_target_distance);
   const auto shift_start_pose = motion_utils::calcLongitudinalOffsetPose(
-    road_lane_reference_path_to_shift_end.points, shift_end_pose_road_lane.position,
+    extended_prev_module_path.points, shift_end_pose_road_lane.position,
     -before_shifted_pull_over_distance);
   if (!shift_start_pose) return {};
 
   // set path shifter and generate shifted path
   PathShifter path_shifter{};
-  path_shifter.setPath(road_lane_reference_path_to_shift_end);
+  path_shifter.setPath(extended_prev_module_path);
   ShiftLine shift_line{};
   shift_line.start = *shift_start_pose;
   shift_line.end = shift_end_pose;

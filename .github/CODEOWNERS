@@ -156,7 +156,9 @@ perception/traffic_light_ssd_fine_detector/** daisuke.nishimatsu@tier4.jp
 perception/traffic_light_visualization/** yukihiro.saito@tier4.jp
 planning/behavior_path_avoidance_by_lane_change_module/** fumiya.watanabe@tier4.jp satoshi.ota@tier4.jp shumpei.wakabayashi@tier4.jp tomohito.ando@tier4.jp tomoya.kimura@tier4.jp zulfaqar.azmi@tier4.jp
 planning/behavior_path_avoidance_module/** fumiya.watanabe@tier4.jp kyoichi.sugahara@tier4.jp satoshi.ota@tier4.jp shumpei.wakabayashi@tier4.jp takamasa.horibe@tier4.jp tomohito.ando@tier4.jp tomoya.kimura@tier4.jp
+planning/behavior_path_external_request_lane_change_module/** fumiya.watanabe@tier4.jp kosuke.takeuchi@tier4.jp shumpei.wakabayashi@tier4.jp tomohito.ando@tier4.jp tomoya.kimura@tier4.jp zulfaqar.azmi@tier4.jp
 planning/behavior_path_goal_planner_module/** kosuke.takeuchi@tier4.jp kyoichi.sugahara@tier4.jp satoshi.ota@tier4.jp shumpei.wakabayashi@tier4.jp tomohito.ando@tier4.jp tomoya.kimura@tier4.jp
+planning/behavior_path_lane_change_module/** fumiya.watanabe@tier4.jp kosuke.takeuchi@tier4.jp shumpei.wakabayashi@tier4.jp tomohito.ando@tier4.jp tomoya.kimura@tier4.jp zulfaqar.azmi@tier4.jp
 planning/behavior_path_planner/** fumiya.watanabe@tier4.jp kosuke.takeuchi@tier4.jp kyoichi.sugahara@tier4.jp satoshi.ota@tier4.jp shumpei.wakabayashi@tier4.jp takamasa.horibe@tier4.jp takayuki.murooka@tier4.jp tomohito.ando@tier4.jp tomoya.kimura@tier4.jp zulfaqar.azmi@tier4.jp
 planning/behavior_path_planner_common/** fumiya.watanabe@tier4.jp kosuke.takeuchi@tier4.jp mamoru.sobue@tier4.jp maxime.clement@tier4.jp satoshi.ota@tier4.jp shumpei.wakabayashi@tier4.jp takamasa.horibe@tier4.jp takayuki.murooka@tier4.jp tomoya.kimura@tier4.jp zulfaqar.azmi@tier4.jp
 planning/behavior_path_side_shift_module/** fumiya.watanabe@tier4.jp kyoichi.sugahara@tier4.jp satoshi.ota@tier4.jp shumpei.wakabayashi@tier4.jp tomohito.ando@tier4.jp tomoya.kimura@tier4.jp
@@ -226,13 +228,13 @@ system/default_ad_api/** isamu.takagi@tier4.jp kahhooi.tan@tier4.jp makoto.yabut
 system/default_ad_api_helpers/ad_api_adaptors/** isamu.takagi@tier4.jp kahhooi.tan@tier4.jp makoto.yabuta@tier4.jp ryohsuke.mitsudome@tier4.jp yukihiro.saito@tier4.jp
 system/default_ad_api_helpers/ad_api_visualizers/** isamu.takagi@tier4.jp kahhooi.tan@tier4.jp makoto.yabuta@tier4.jp ryohsuke.mitsudome@tier4.jp yukihiro.saito@tier4.jp
 system/default_ad_api_helpers/automatic_pose_initializer/** isamu.takagi@tier4.jp kahhooi.tan@tier4.jp makoto.yabuta@tier4.jp ryohsuke.mitsudome@tier4.jp yukihiro.saito@tier4.jp
+system/diagnostic_graph_aggregator/** isamu.takagi@tier4.jp
 system/dummy_diag_publisher/** fumihito.ito@tier4.jp tetsuhiro.kawaguchi@tier4.jp
 system/dummy_infrastructure/** ryohsuke.mitsudome@tier4.jp
 system/duplicated_node_checker/** shumpei.wakabayashi@tier4.jp uken.ryu@tier4.jp
 system/emergency_handler/** makoto.kurihara@tier4.jp
 system/mrm_comfortable_stop_operator/** makoto.kurihara@tier4.jp tomohito.ando@tier4.jp
 system/mrm_emergency_stop_operator/** makoto.kurihara@tier4.jp tomohito.ando@tier4.jp
-system/system_diagnostic_graph/** isamu.takagi@tier4.jp
 system/system_error_monitor/** fumihito.ito@tier4.jp
 system/system_monitor/** fumihito.ito@tier4.jp tetsuhiro.kawaguchi@tier4.jp
 system/topic_state_monitor/** ryohsuke.mitsudome@tier4.jp
